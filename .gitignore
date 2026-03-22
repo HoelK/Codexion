@@ -1,5 +1,5 @@
 *.o
-philo
+codexion
 test.sh
 vgcore*
 massif*
