@@ -9,16 +9,16 @@
 # include <stdbool.h>
 # include <pthread.h>
 # include <sys/time.h>
-# define AC_REQUIRED	9
-# define AV_NB_CODERS	av[1]
-# define AV_TBURNOUT	av[2]
-# define AV_TCOMPILE	av[3]
-# define AV_TDEBUG		av[4]
-# define AV_TREFACT		av[5]
-# define AV_NCOMPILE	av[6]
-# define AV_CDDONGLE	av[7]
-# define RIGHT			0
-# define LEFT			1
+# define AC_REQUIRED		9
+# define AV_NB_CODERS		av[1]
+# define AV_TBURNOUT		av[2]
+# define AV_TCOMPILE		av[3]
+# define AV_TDEBUG			av[4]
+# define AV_TREFACT			av[5]
+# define AV_NCOMPILE		av[6]
+# define AV_CDDONGLE		av[7]
+# define RIGHT				0
+# define LEFT				1
 # define DONGLE_MESSAGE		"has taken a dongle\n"
 # define COMPILE_MESSAGE	"is compiling\n"
 # define DEBUG_MESSAGE		"is debugging\n"
@@ -42,6 +42,7 @@ typedef struct s_dongle
 	int				queue[2];
 	int				q_size;
 	t_coder			*coders[2];
+	uint32_t		last_use;
 	pthread_mutex_t	mutex;
 }	t_dongle;
 
@@ -78,7 +79,8 @@ void		print_status(int id, uint32_t start, uint8_t status);
 uint32_t	timestamp(void);
 void		ft_sleep(uint32_t u_time);
 
-void	free_hub(t_hub *hub);
+void		free_hub(t_hub *hub);
 
-bool	init(t_hub *hub, char **av);
-bool	check_args(int ac, char **av);
+void		*routine(void *data);
+bool		init(t_hub *hub, char **av);
+bool		check_args(int ac, char **av);

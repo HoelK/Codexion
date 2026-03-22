@@ -1,6 +1,11 @@
 CC=cc
-FLAGS=-Wall -Wextra -Werror -g3 -pthread
-SRCS=main.c args.c utils.c init.c memory.c
+FLAGS=-Wall -Wextra -Werror -g3 -pthread -I./header
+SRCS=src/main.c \
+	 src/routine.c \
+	 src/args.c \
+	 src/utils.c \
+	 src/init.c \
+	 src/memory.c
 OBJS=$(SRCS:.c=.o)
 NAME=philo
 
