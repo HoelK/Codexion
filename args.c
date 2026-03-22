@@ -27,7 +27,7 @@ static bool is_integer(char *str)
 	return (res >= 0 || res < INT_MAX); 
 }
 
-bool check_args(int ac, char **av)
+bool check_args(const int ac, char **av)
 {
 	int		i;
 	char	*shreduler;
@@ -36,7 +36,7 @@ bool check_args(int ac, char **av)
 		return (false);
 	i = 0;
 	shreduler = av[AC_REQUIRED - 1];
-	if (ft_strcmp(shreduler, "fifo") && ft_strcmp(shreduler, "edf"))
+	if (strcmp(shreduler, "fifo") && strcmp(shreduler, "edf"))
 			return (false);
 	while (++i < (AC_REQUIRED - 1))
 	{
