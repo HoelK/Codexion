@@ -55,31 +55,28 @@ uint32_t	timestamp(void)
 	return (tv.tv_sec * 1000LL + tv.tv_usec / 1000);
 }
 
-void	ft_sleep(uint32_t u_time)
+void	ft_sleep(u32 u_time)
 {
-	uint32_t	start;
+	u32	start;
 
 	start = timestamp();
 	while (timestamp() - start < u_time)
 		usleep(10);
 }
 
-void	ft_write(const char *s)
+void	print_status(int id, u32 start, u8 status)
 {
-	write(2, s, strlen(s));
-}
+	u32 time;
 
-void	print_status(int id, uint32_t start, uint8_t status)
-{
-	fprintf(stderr, "[%d][%d]", id, timestamp() - start);
+	time = timestamp() - start;
 	if (status == DONGLE)
-		ft_write(DONGLE_MESSAGE);
+		fprintf(stderr, "[%d][%d]%s", id, time, DONGLE_MESSAGE);
 	else if (status == COMPILE)
-		ft_write(COMPILE_MESSAGE);
+		fprintf(stderr, "[%d][%d]%s", id, time, COMPILE_MESSAGE);
 	else if (status == DEBUG)
-		ft_write(DEBUG_MESSAGE);
+		fprintf(stderr, "[%d][%d]%s", id, time, DEBUG_MESSAGE);
 	else if (status == REFACTOR)
-		ft_write(REFACTOR_MESSAGE);
+		fprintf(stderr, "[%d][%d]%s", id, time, REFACTOR_MESSAGE);
 	else if (status == BURN_OUT)
-		ft_write(BURNOUT_MESSAGE);
+		fprintf(stderr, "[%d][%d]%s", id, time, BURNOUT_MESSAGE);
 }
