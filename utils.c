@@ -1,22 +1,14 @@
-bool ft_isspace(char c)
+# include "codexion.h"
+
+bool ft_isspace(const char c)
 {
     return (c == ' ' || c == '\t' || c == '\n' ||
            c == '\r' || c == '\f' || c == '\v');
 }
 
-int	ft_isdigit(int c)
+int	ft_isdigit(const char c)
 {
 	return (c >= '0' && c <= '9');
-}
-
-int ft_strcmp(const char *s1, const char *s2)
-{
-    while (*s1 && (*s1 == *s2))
-	{
-        s1++;
-        s2++;
-    }
-    return ((unsigned char)*s1 - (unsigned char)*s2);
 }
 
 long ft_atol(const char *str)
@@ -40,4 +32,54 @@ long ft_atol(const char *str)
         str++;
     }
     return (sign * result);
+}
+
+void	*ft_bzero(void *s, size_t n)
+{
+	size_t			i;
+	unsigned char	*area;
+
+	i = 0;
+	area = s;
+	while (i < n)
+		area[i++] = 0;
+	return (s);
+}
+
+
+uint32_t	timestamp(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000LL + tv.tv_usec / 1000);
+}
+
+void	ft_sleep(uint32_t u_time)
+{
+	uint32_t	start;
+
+	start = timestamp();
+	while (timestamp() - start < u_time)
+		usleep(10);
+}
+
+void	ft_write(const char *s)
+{
+	write(2, s, strlen(s));
+}
+
+void	print_status(int id, uint32_t start, uint8_t status)
+{
+	fprintf(stderr, "[%d][%d]", id, timestamp() - start);
+	if (status == DONGLE)
+		ft_write(DONGLE_MESSAGE);
+	else if (status == COMPILE)
+		ft_write(COMPILE_MESSAGE);
+	else if (status == DEBUG)
+		ft_write(DEBUG_MESSAGE);
+	else if (status == REFACTOR)
+		ft_write(REFACTOR_MESSAGE);
+	else if (status == BURN_OUT)
+		ft_write(BURNOUT_MESSAGE);
 }
