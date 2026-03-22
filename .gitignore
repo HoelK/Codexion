@@ -1,2 +1,5 @@
 *.o
 philo
+test.sh
+vgcore*
+massif*
