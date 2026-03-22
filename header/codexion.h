@@ -26,6 +26,12 @@
 # define BURNOUT_MESSAGE	"burned out\n"
 # define GET				0
 # define SET				1
+typedef uint8_t				u8;
+typedef uint16_t			u16;
+typedef uint32_t			u32;
+typedef pthread_mutex_t		pmutex;
+typedef struct s_hub		t_hub;
+typedef struct s_coder		t_coder;
 
 enum e_status
 {
@@ -35,13 +41,6 @@ enum e_status
 	REFACTOR,
 	BURN_OUT
 };
-
-typedef uint8_t			u8;
-typedef uint16_t		u16;
-typedef uint32_t		u32;
-typedef pthread_mutex_t	pmutex;
-typedef struct s_hub	t_hub;
-typedef struct s_coder	t_coder;
 
 typedef struct s_config
 {
@@ -66,13 +65,13 @@ typedef struct s_dongle
 typedef struct s_coder
 {
 	u16			id;
-	bool		burnout;
-	pthread_t	thread;
-	t_dongle	*dongle[2];
-	t_hub		*hub;
 	u32			last_compile;
 	u16			compile_count;
 	bool		finished;
+	pmutex		m_compile;
+	t_hub		*hub;
+	pthread_t	thread;
+	t_dongle	*dongle[2];
 }	t_coder;
 
 typedef struct s_monitor
@@ -109,3 +108,5 @@ bool		init(t_hub *hub, char **av);
 bool		check_args(int ac, char **av);
 
 bool		access_end(t_hub *hub, u8 mode);
+u32			access_last_compile(t_coder *coder, u8 mode);
+u16			access_compile_count(t_coder *coder, u8 mode);

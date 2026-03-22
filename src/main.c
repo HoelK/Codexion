@@ -3,9 +3,11 @@
 static void start(t_hub *hub)
 {
 	hub->start = timestamp();
-	for (int i = 0; i < hub->n_coders; i++)
+	pthread_create(&hub->monitor.thread, NULL, &monitor, hub);
+	for (int i = 0; i < hub->config.n_coders; i++)
 		pthread_create(&hub->coders[i].thread, NULL, &routine, &hub->coders[i]);
-	for (int i = 0; i < hub->n_coders; i++)
+	pthread_join(hub->monitor.thread, NULL);
+	for (int i = 0; i < hub->config.n_coders; i++)
 		pthread_join(hub->coders[i].thread, NULL);
 }
 

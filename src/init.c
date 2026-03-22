@@ -28,7 +28,7 @@ static bool init_dongle(int i, t_hub *hub)
 	return (true);
 }
 
-static void	init_coder(int i, t_hub *hub)
+static bool	init_coder(int i, t_hub *hub)
 {
 	hub->coders[i].id = i;
 	hub->coders[i].hub = hub;
@@ -36,11 +36,14 @@ static void	init_coder(int i, t_hub *hub)
 	hub->coders[i].compile_count = 0;
 	hub->coders[i].dongle[0] =	&hub->dongles[i];
 	hub->coders[i].dongle[1] =	&hub->dongles[i + 1];
+	if (pthread_mutex_init(&hub->coders[i].m_compile, NULL))
+		return (false);
 	if (i == (hub->config.n_coders - 1))
 	{
 		hub->coders[i].dongle[0] = &hub->dongles[0];
 		hub->coders[i].dongle[1] = &hub->dongles[i];
 	}
+	return (true);
 }
 
 bool	init(t_hub *hub, char **av)
@@ -60,9 +63,8 @@ bool	init(t_hub *hub, char **av)
 		return (false);
 	while (++i < hub->config.n_coders)
 	{
-		if (!init_dongle(i, hub))
+		if (!init_dongle(i, hub) || !init_coder(i, hub))
 			return (false);
-		init_coder(i, hub);
 	}
 	return (true);
 	//printf("[amount][%d]\n[burnout time][%d]\n[compile time][%d]\n[debug time][%d]\n[refactor time][%d]\n[compile amount][%d]\n[dongle cooldown][%d]\n", hub->n_coders, hub->burnout_time, hub->compile_time, hub->debug_time, hub->refactor_time, hub->n_compiles, hub->dongle_cd);
