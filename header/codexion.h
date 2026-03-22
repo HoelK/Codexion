@@ -24,6 +24,8 @@
 # define DEBUG_MESSAGE		"is debugging\n"
 # define REFACTOR_MESSAGE	"is refactoring\n"
 # define BURNOUT_MESSAGE	"burned out\n"
+# define GET				0
+# define SET				1
 
 enum e_status
 {
@@ -34,39 +36,59 @@ enum e_status
 	BURN_OUT
 };
 
-typedef struct s_hub t_hub;
-typedef struct s_coder t_coder;
+typedef uint8_t			u8;
+typedef uint16_t		u16;
+typedef uint32_t		u32;
+typedef pthread_mutex_t	pmutex;
+typedef struct s_hub	t_hub;
+typedef struct s_coder	t_coder;
+
+typedef struct s_config
+{
+	u16	n_coders;
+	u16	n_compiles;
+	u32	burnout_time;
+	u32	compile_time;
+	u32	debug_time;
+	u32	refactor_time;
+	u32	dongle_cd;
+}	t_config;
 
 typedef struct s_dongle
 {
 	int				queue[2];
 	int				q_size;
 	t_coder			*coders[2];
-	uint32_t		last_use;
-	pthread_mutex_t	mutex;
+	u32				last_use;
+	pmutex			mutex;
 }	t_dongle;
 
 typedef struct s_coder
 {
-	int			id;
+	u16			id;
 	bool		burnout;
 	pthread_t	thread;
 	t_dongle	*dongle[2];
 	t_hub		*hub;
+	u32			last_compile;
+	u16			compile_count;
+	bool		finished;
 }	t_coder;
+
+typedef struct s_monitor
+{
+	pthread_t	thread;
+}	t_monitor;
 
 typedef struct s_hub
 {
-	uint32_t	start;
-	int			n_coders;
-	int			n_compiles;
-	int			burnout_time;
-	int			compile_time;
-	int			debug_time;
-	int			refactor_time;
-	int			dongle_cd;
+	u32			start;
+	t_monitor	monitor;
 	t_coder		*coders;
 	t_dongle	*dongles;
+	t_config	config;
+	bool		end;
+	pmutex		m_end;
 }	t_hub;
 
 int			ft_isdigit(const char c);
@@ -82,5 +104,8 @@ void		ft_sleep(uint32_t u_time);
 void		free_hub(t_hub *hub);
 
 void		*routine(void *data);
+void		*monitor(void *data);
 bool		init(t_hub *hub, char **av);
 bool		check_args(int ac, char **av);
+
+bool		access_end(t_hub *hub, u8 mode);
